@@ -1,0 +1,21 @@
+{
+  "RecipeSpec": {
+    "Id": "CaravanRewardMetalBlock",
+    "BackwardCompatibleIds": [],
+    "DisplayLocKey": "Recipe.CaravanRewardMetalBlock.DisplayName",
+    "CycleDurationInHours": 1,
+    "Ingredients": [],
+    "Products": [
+      {
+        "Id": "MetalBlock",
+        "Amount": 8
+      }
+    ],
+    "ProducedSciencePoints": 0,
+    "Fuel": "",
+    "CyclesFuelLasts": 0,
+    "FuelCapacity": 0,
+    "CyclesCapacity": 2,
+    "Icon": "Sprites/Goods/MetalBlockIcon"
+  }
+}

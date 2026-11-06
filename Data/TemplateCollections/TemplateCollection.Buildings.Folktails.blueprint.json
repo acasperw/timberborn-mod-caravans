@@ -1,0 +1,8 @@
+{
+  "TemplateCollectionSpec": {
+    "CollectionId": "Buildings.Folktails",
+    "Blueprints#append": [
+      "Buildings/Storage/CaravanPost/CaravanPost.Folktails.blueprint"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "Name": "Caravans",
+  "Version": "0.1.0",
+  "Id": "acasperw.Caravans",
+  "MinimumGameVersion": "1.1.0.0",
+  "Description": "Send surplus goods off the map with caravans in exchange for science points or rare items. Requires a road to the map edge; trips take time and carry some risk.",
+  "RequiredMods": [],
+  "OptionalMods": []
+}

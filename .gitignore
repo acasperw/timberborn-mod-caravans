@@ -1,0 +1,33 @@
+*.meta
+*.pyc
+*.pyo
+__pycache__/
+
+# Build output
+bin/
+obj/
+**/bin/
+**/obj/
+
+# Visual Studio / Rider / VS Code local state
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# .NET build artifacts
+*.dll
+*.pdb
+*.cache
+*.tmp
+project.assets.json
+project.nuget.cache
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
+
+# Local Timberborn config written next to a manual deployment
+beaver_forecast.cfg

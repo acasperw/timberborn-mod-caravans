@@ -1,0 +1,21 @@
+{
+  "RecipeSpec": {
+    "Id": "CaravanRewardGear",
+    "BackwardCompatibleIds": [],
+    "DisplayLocKey": "Recipe.CaravanRewardGear.DisplayName",
+    "CycleDurationInHours": 1,
+    "Ingredients": [],
+    "Products": [
+      {
+        "Id": "Gear",
+        "Amount": 20
+      }
+    ],
+    "ProducedSciencePoints": 0,
+    "Fuel": "",
+    "CyclesFuelLasts": 0,
+    "FuelCapacity": 0,
+    "CyclesCapacity": 2,
+    "Icon": "Sprites/Goods/GearIcon"
+  }
+}
