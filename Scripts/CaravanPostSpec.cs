@@ -9,6 +9,9 @@ namespace Mods.Caravans.Scripts {
     public int MaxConcurrentCaravans { get; init; }
 
     [Serialize]
+    public string CaravanModel { get; init; }
+
+    [Serialize]
     public float WalkingTilesPerHour { get; init; }
 
     [Serialize]

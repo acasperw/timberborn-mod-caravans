@@ -64,7 +64,7 @@
   "BlockObjectSpec": {
     "Size": {
       "X": 3,
-      "Y": 1,
+      "Y": 3,
       "Z": 2
     },
     "Blocks": [
@@ -85,6 +85,90 @@
       {
         "MatterBelow": "GroundOrStackable",
         "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "All",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "All",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "All",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "All",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "All",
+        "Stackable": "None",
+        "OccupyAllBelow": false,
+        "Underground": false
+      },
+      {
+        "MatterBelow": "Any",
+        "Occupations": "All",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
@@ -219,12 +303,13 @@
     ],
     "WalkingTilesPerHour": 6.0,
     "MinTravelHours": 8.0,
-    "MaxTravelHours": 72.0
+    "MaxTravelHours": 72.0,
+    "CaravanModel": "Caravans/Caravan.Folktails.Model"
   },
   "Children": {
     "#Finished": {
       "TimbermeshSpec": {
-        "Model": "Buildings/DistrictManagement/DistrictCrossing/DistrictCrossing.Folktails.Model"
+        "Model": "Buildings/Storage/CaravanPost/CaravanPost.Folktails.Model"
       },
       "CollidersSpec": {
         "BoxColliders": [
@@ -232,36 +317,48 @@
             "Center": {
               "X": 1.50582361,
               "Y": 0.496590853,
-              "Z": 0.58214134
+              "Z": 1.0
             },
             "Size": {
               "X": 2.76765823,
               "Y": 1.00564241,
-              "Z": 0.751245141
+              "Z": 1.586962
             }
           },
           {
             "Center": {
               "X": 1.49376357,
               "Y": 0.6928351,
-              "Z": 0.581762
+              "Z": 1.0
             },
             "Size": {
               "X": 1.72682786,
               "Y": 1.39813089,
-              "Z": 0.7520038
+              "Z": 1.58848
             }
           },
           {
             "Center": {
               "X": 1.49376345,
               "Y": 0.02666691,
-              "Z": 0.48527962
+              "Z": 1.5
             },
             "Size": {
               "X": 3.00085449,
               "Y": 0.06579453,
-              "Z": 0.9449686
+              "Z": 2.974409
+            }
+          },
+          {
+            "Center": {
+              "X": 1.5,
+              "Y": 0.62,
+              "Z": 2.5
+            },
+            "Size": {
+              "X": 2.8,
+              "Y": 1.25,
+              "Z": 0.9
             }
           }
         ],
@@ -271,12 +368,12 @@
     },
     "#Unfinished": {
       "Children": {
-        "ConstructionBase3x2Half#nested": {
-          "BlueprintPath": "ConstructionBases/ConstructionBase3x2Half/ConstructionBase3x2Half.blueprint"
+        "ConstructionBase3x3#nested": {
+          "BlueprintPath": "ConstructionBases/ConstructionBase3x3/ConstructionBase3x3.blueprint"
         },
         "ConstructionStage0": {
           "TimbermeshSpec": {
-            "Model": "Buildings/DistrictManagement/DistrictCrossing/DistrictCrossing.Folktails.ConstructionStage0.Model"
+            "Model": "Buildings/Storage/CaravanPost/CaravanPost.Folktails.ConstructionStage0.Model"
           },
           "CollidersSpec": {
             "BoxColliders": [
@@ -284,24 +381,36 @@
                 "Center": {
                   "X": 1.5,
                   "Y": 0.4955544,
-                  "Z": 0.6149061
+                  "Z": 1.0
                 },
                 "Size": {
                   "X": 2.7535162,
                   "Y": 0.9911088,
-                  "Z": 0.770187855
+                  "Z": 1.540376
                 }
               },
               {
                 "Center": {
                   "X": 1.5,
                   "Y": 1.31363821,
-                  "Z": 0.879893661
+                  "Z": 1.0
                 },
                 "Size": {
                   "X": 1.75455,
                   "Y": 0.644045353,
-                  "Z": 0.240212739
+                  "Z": 0.480425
+                }
+              },
+              {
+                "Center": {
+                  "X": 1.5,
+                  "Y": 0.03,
+                  "Z": 2.5
+                },
+                "Size": {
+                  "X": 3.0,
+                  "Y": 0.06,
+                  "Z": 1.0
                 }
               }
             ],

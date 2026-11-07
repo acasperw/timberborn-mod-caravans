@@ -22,7 +22,6 @@ namespace Mods.Caravans.Scripts {
                              IPersistentEntity,
                              IManufactoryLimiter {
 
-    private const int RouteCheckIntervalTicks = 100;
     private const string RewardRecipePrefix = "CaravanReward";
 
     private static readonly ComponentKey CaravanPostKey = new ComponentKey("CaravanPost");
@@ -37,22 +36,16 @@ namespace Mods.Caravans.Scripts {
     private readonly ScienceService _scienceService;
     private readonly QuickNotificationService _notificationService;
     private readonly CaravanVisualizer _visualizer;
-
-    private readonly List<string> _recipeIds = new List<string>();
-    private readonly List<float> _returnTimes = new List<float>();
-    private readonly List<float> _departureTimes = new List<float>();
-    private readonly List<bool> _lost = new List<bool>();
-    private readonly List<Vector3> _path = new List<Vector3>();
+    private readonly List<Trip> _trips = new List<Trip>();
 
     private CaravanPostSpec _spec;
     private Manufactory _manufactory;
     private BuildingAccessible _buildingAccessible;
     private StatusToggle _noRouteStatus;
     private StatusToggle _noCapacityStatus;
-    private bool _hasRoute;
-    private float _routeLength;
+    private CaravanRoute _route;
+    private int _routeVersion = -1;
     private bool _visualsRestorePending;
-    private int _ticksSinceRouteCheck = RouteCheckIntervalTicks;
 
     public CaravanPost(IDayNightCycle dayNightCycle,
                        ILoc loc,
@@ -60,34 +53,33 @@ namespace Mods.Caravans.Scripts {
                        ScienceService scienceService,
                        QuickNotificationService notificationService,
                        CaravanVisualizer visualizer) {
-      _visualizer = visualizer;
       _dayNightCycle = dayNightCycle;
       _loc = loc;
       _routeFinder = routeFinder;
       _scienceService = scienceService;
       _notificationService = notificationService;
+      _visualizer = visualizer;
     }
 
-    public int CaravansOnTheRoad => _recipeIds.Count;
+    public int CaravansOnTheRoad => _trips.Count;
 
     public int MaxCaravans => _spec.MaxConcurrentCaravans;
 
-    public bool HasRoute => _hasRoute;
-
-    public float RouteLength => _routeLength;
-
-    public float TripHours(CaravanTradeSpec trade) {
-      var walking = 2f * _routeLength / _spec.WalkingTilesPerHour;
-      return Mathf.Clamp(walking + trade.AwayHours, _spec.MinTravelHours, _spec.MaxTravelHours);
-    }
+    public float RouteLength => _route?.Length ?? 0f;
 
     public RecipeSpec CurrentRecipe => _manufactory.HasCurrentRecipe ? _manufactory.CurrentRecipe : null;
 
     public CaravanTradeSpec CurrentTrade => CurrentRecipe == null ? null : FindTrade(CurrentRecipe.Id);
 
+    private float HoursPerDay => _dayNightCycle.DaytimeLengthInHours + _dayNightCycle.NighttimeLengthInHours;
+
+    public float TripHours(CaravanTradeSpec trade) {
+      var walking = 2f * RouteLength / _spec.WalkingTilesPerHour;
+      return Mathf.Clamp(walking + trade.AwayHours, _spec.MinTravelHours, _spec.MaxTravelHours);
+    }
+
     public float HoursUntilReturn(int index) {
-      var hoursPerDay = _dayNightCycle.DaytimeLengthInHours + _dayNightCycle.NighttimeLengthInHours;
-      return Mathf.Max(0f, (_returnTimes[index] - _dayNightCycle.PartialDayNumber) * hoursPerDay);
+      return Mathf.Max(0f, (_trips[index].ReturnDay - _dayNightCycle.PartialDayNumber) * HoursPerDay);
     }
 
     public void Awake() {
@@ -112,29 +104,18 @@ namespace Mods.Caravans.Scripts {
     }
 
     public override void Tick() {
-      if (++_ticksSinceRouteCheck >= RouteCheckIntervalTicks) {
-        // Random restart spreads the checks of several posts across ticks.
-        _ticksSinceRouteCheck = Random.Range(0, RouteCheckIntervalTicks / 2);
-        UpdateRoute();
+      if (_routeVersion != _routeFinder.RoadsVersion) {
+        _routeVersion = _routeFinder.RoadsVersion;
+        _route = _routeFinder.FindRoute(_buildingAccessible.CalculateAccess());
+        UpdateStatuses();
       }
-      if (_visualsRestorePending && _hasRoute) {
-        RestoreVisuals();
+      if (_visualsRestorePending && _route != null) {
+        _visualsRestorePending = false;
+        foreach (var trip in _trips) {
+          SendVisual(trip);
+        }
       }
       ResolveReturnedCaravans();
-    }
-
-    private void RestoreVisuals() {
-      _visualsRestorePending = false;
-      for (var i = 0; i < _recipeIds.Count; i++) {
-        _visualizer.Send(_path, _departureTimes[i], _returnTimes[i], !_lost[i], LegFraction(i));
-      }
-    }
-
-    private float LegFraction(int index) {
-      var hoursPerDay = _dayNightCycle.DaytimeLengthInHours + _dayNightCycle.NighttimeLengthInHours;
-      var tripHours = (_returnTimes[index] - _departureTimes[index]) * hoursPerDay;
-      var legHours = Mathf.Min(_routeLength / _spec.WalkingTilesPerHour, tripHours * 0.45f);
-      return tripHours > 0f ? legHours / tripHours : 0.1f;
     }
 
     public float ProductionEfficiency() {
@@ -146,55 +127,50 @@ namespace Mods.Caravans.Scripts {
     }
 
     public void Save(IEntitySaver entitySaver) {
+      var recipeIds = new List<string>(_trips.Count);
+      var returnTimes = new List<float>(_trips.Count);
+      var departureTimes = new List<float>(_trips.Count);
+      var lost = new List<bool>(_trips.Count);
+      foreach (var trip in _trips) {
+        recipeIds.Add(trip.RecipeId);
+        returnTimes.Add(trip.ReturnDay);
+        departureTimes.Add(trip.DepartureDay);
+        lost.Add(trip.Lost);
+      }
       var component = entitySaver.GetComponent(CaravanPostKey);
-      component.Set(RecipeIdsKey, _recipeIds);
-      component.Set(ReturnTimesKey, _returnTimes);
-      component.Set(DepartureTimesKey, _departureTimes);
-      component.Set(LostKey, _lost);
+      component.Set(RecipeIdsKey, recipeIds);
+      component.Set(ReturnTimesKey, returnTimes);
+      component.Set(DepartureTimesKey, departureTimes);
+      component.Set(LostKey, lost);
     }
 
     public void Load(IEntityLoader entityLoader) {
       if (!entityLoader.TryGetComponent(CaravanPostKey, out var component)) {
         return;
       }
-      _recipeIds.AddRange(component.Get(RecipeIdsKey));
-      _returnTimes.AddRange(component.Get(ReturnTimesKey));
-      if (component.Has(DepartureTimesKey)) {
-        _departureTimes.AddRange(component.Get(DepartureTimesKey));
+      var recipeIds = component.Get(RecipeIdsKey);
+      var returnTimes = component.Get(ReturnTimesKey);
+      // Older saves lack departure times and losses.
+      var departureTimes = component.Has(DepartureTimesKey) ? component.Get(DepartureTimesKey) : null;
+      var lost = component.Has(LostKey) ? component.Get(LostKey) : null;
+      for (var i = 0; i < recipeIds.Count; i++) {
+        _trips.Add(new Trip(recipeIds[i],
+                            departureTimes != null && i < departureTimes.Count
+                                ? departureTimes[i]
+                                : returnTimes[i] - 0.5f,
+                            returnTimes[i],
+                            lost != null && i < lost.Count && lost[i]));
       }
-      while (_departureTimes.Count < _recipeIds.Count) {
-        _departureTimes.Add(_returnTimes[_departureTimes.Count] - 0.5f);
-      }
-      if (component.Has(LostKey)) {
-        _lost.AddRange(component.Get(LostKey));
-      }
-      while (_lost.Count < _recipeIds.Count) {
-        _lost.Add(false);
-      }
-      _visualsRestorePending = _recipeIds.Count > 0;
+      _visualsRestorePending = _trips.Count > 0;
     }
 
     private bool CanSendCaravan() {
-      return _hasRoute && _recipeIds.Count < _spec.MaxConcurrentCaravans;
-    }
-
-    private void UpdateRoute() {
-      _hasRoute = _routeFinder.TryFindRoadToMapEdge(_buildingAccessible.CalculateAccess(), _path);
-      _routeLength = _hasRoute ? PathLength(_path) : 0f;
-      UpdateStatuses();
-    }
-
-    private static float PathLength(List<Vector3> path) {
-      var length = 0f;
-      for (var i = 1; i < path.Count; i++) {
-        length += Vector3.Distance(path[i - 1], path[i]);
-      }
-      return length;
+      return _route != null && _trips.Count < _spec.MaxConcurrentCaravans;
     }
 
     private void UpdateStatuses() {
-      var noRoute = !_hasRoute;
-      var noCapacity = _hasRoute && _recipeIds.Count >= _spec.MaxConcurrentCaravans;
+      var noRoute = _route == null;
+      var noCapacity = !noRoute && _trips.Count >= _spec.MaxConcurrentCaravans;
       if (noRoute != _noRouteStatus.IsActive) {
         _noRouteStatus.Toggle(noRoute);
       }
@@ -204,55 +180,59 @@ namespace Mods.Caravans.Scripts {
     }
 
     private void OnProductionFinished(object sender, System.EventArgs e) {
-      var recipe = _manufactory.CurrentRecipe;
-      var trade = FindTrade(recipe.Id);
+      var trade = FindTrade(_manufactory.CurrentRecipe.Id);
       if (trade == null) {
         return;
       }
       var tripHours = TripHours(trade);
-      var departure = _dayNightCycle.PartialDayNumber;
-      var returnTime = _dayNightCycle.DayNumberHoursFromNow(tripHours);
-      var lost = Random.value < trade.LossChance;
-      _recipeIds.Add(recipe.Id);
-      _returnTimes.Add(returnTime);
-      _departureTimes.Add(departure);
-      _lost.Add(lost);
-      if (_path.Count >= 2) {
-        _visualizer.Send(_path, departure, returnTime, !lost, LegFraction(_recipeIds.Count - 1));
-      }
+      var trip = new Trip(trade.RecipeId, _dayNightCycle.PartialDayNumber,
+                          _dayNightCycle.DayNumberHoursFromNow(tripHours), Random.value < trade.LossChance);
+      _trips.Add(trip);
+      SendVisual(trip);
       _notificationService.SendNotification(_loc.T("Caravans.Notification.Departed", tripHours));
       UpdateStatuses();
     }
 
+    private void SendVisual(Trip trip) {
+      _visualizer.Send(_spec.CaravanModel, () => _route, trip.DepartureDay, trip.ReturnDay, !trip.Lost,
+                       LegFraction(trip));
+    }
+
+    // Share of the trip spent driving each way, at walking speed but leaving at least 10% of the trip "away".
+    private float LegFraction(Trip trip) {
+      var tripHours = (trip.ReturnDay - trip.DepartureDay) * HoursPerDay;
+      if (tripHours <= 0f) {
+        return 0.1f;
+      }
+      return Mathf.Min(RouteLength / _spec.WalkingTilesPerHour, tripHours * 0.45f) / tripHours;
+    }
+
     private void ResolveReturnedCaravans() {
-      for (var i = _recipeIds.Count - 1; i >= 0; i--) {
-        if (_dayNightCycle.PartialDayNumber < _returnTimes[i]) {
+      var now = _dayNightCycle.PartialDayNumber;
+      for (var i = _trips.Count - 1; i >= 0; i--) {
+        var trip = _trips[i];
+        if (now < trip.ReturnDay) {
           continue;
         }
-        var trade = FindTrade(_recipeIds[i]);
-        if (trade != null && _lost[i]) {
+        var trade = FindTrade(trip.RecipeId);
+        if (trade != null && trip.Lost) {
           _notificationService.SendWarningNotification(_loc.T("Caravans.Notification.Lost"));
-        } else if (trade != null && TryDeliver(trade)) {
-          _notificationService.SendNotification(_loc.T("Caravans.Notification.Returned"));
         } else if (trade != null) {
-          continue;
+          Deliver(trade);
+          _notificationService.SendNotification(_loc.T("Caravans.Notification.Returned"));
         }
-        _recipeIds.RemoveAt(i);
-        _returnTimes.RemoveAt(i);
-        _departureTimes.RemoveAt(i);
-        _lost.RemoveAt(i);
+        _trips.RemoveAt(i);
         UpdateStatuses();
       }
     }
 
-    private bool TryDeliver(CaravanTradeSpec trade) {
+    private void Deliver(CaravanTradeSpec trade) {
       var inventory = _manufactory.Inventory;
       // Ignores capacity so rewards still arrive if the player switched recipes while the caravan was away.
       foreach (var reward in trade.GoodRewards) {
         inventory.GiveExistingIgnoringCapacity(reward.ToGoodAmount());
       }
       _scienceService.AddPoints(trade.ScienceReward);
-      return true;
     }
 
     private CaravanTradeSpec FindTrade(string recipeId) {
@@ -262,6 +242,22 @@ namespace Mods.Caravans.Scripts {
         }
       }
       return null;
+    }
+
+    private class Trip {
+
+      public Trip(string recipeId, float departureDay, float returnDay, bool lost) {
+        RecipeId = recipeId;
+        DepartureDay = departureDay;
+        ReturnDay = returnDay;
+        Lost = lost;
+      }
+
+      public string RecipeId { get; }
+      public float DepartureDay { get; }
+      public float ReturnDay { get; }
+      public bool Lost { get; }
+
     }
 
   }

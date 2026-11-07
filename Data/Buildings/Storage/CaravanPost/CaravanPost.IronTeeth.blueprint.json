@@ -1,6 +1,6 @@
 {
   "BuildingSpec": {
-    "SelectionSoundName": "Smelter",
+    "SelectionSoundName": "DistrictCrossing",
     "LoopingSoundName": "",
     "BuildingCost": [
       {
@@ -46,7 +46,9 @@
       "CaravanPlankScience",
       "CaravanMetalScience",
       "CaravanPlankGears",
-      "CaravanGearMetal"
+      "CaravanGearMetal",
+      "CaravanRewardGear",
+      "CaravanRewardMetalBlock"
     ]
   },
   "WorkshopSpec": {},
@@ -65,9 +67,9 @@
   },
   "BlockObjectSpec": {
     "Size": {
-      "X": 2,
-      "Y": 4,
-      "Z": 3
+      "X": 3,
+      "Y": 3,
+      "Z": 2
     },
     "Blocks": [
       {
@@ -127,8 +129,8 @@
         "Underground": false
       },
       {
-        "MatterBelow": "Any",
-        "Occupations": "All",
+        "MatterBelow": "GroundOrStackable",
+        "Occupations": "Bottom, Top, Corners, Path, Middle",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
@@ -184,56 +186,14 @@
       },
       {
         "MatterBelow": "Any",
-        "Occupations": "Floor, Bottom, Path, Middle",
+        "Occupations": "All",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
       },
       {
         "MatterBelow": "Any",
-        "Occupations": "Floor, Bottom, Path, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "Floor, Bottom, Path, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "Floor, Bottom, Path, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "Floor, Bottom, Path, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "Floor, Bottom, Path, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "Floor, Bottom, Corners, Path, Middle",
-        "Stackable": "None",
-        "OccupyAllBelow": false,
-        "Underground": false
-      },
-      {
-        "MatterBelow": "Any",
-        "Occupations": "Floor, Bottom, Corners, Path, Middle",
+        "Occupations": "All",
         "Stackable": "None",
         "OccupyAllBelow": false,
         "Underground": false
@@ -253,9 +213,9 @@
   },
   "BuildingAccessibleSpec": {
     "LocalAccess": {
-      "X": 1.49,
-      "Y": 0.03638568,
-      "Z": 1.232414
+      "X": 1.5,
+      "Y": 0.0,
+      "Z": 1.0
     },
     "ForceOneFinalAccess": false
   },
@@ -280,9 +240,8 @@
     "DisplayNameLocKey": "Building.CaravanPost.DisplayName",
     "DescriptionLocKey": "Building.CaravanPost.Description",
     "FlavorDescriptionLocKey": "Building.CaravanPost.FlavorDescription",
-    "Icon": "Buildings/Metal/Smelter/SmelterIcon"
+    "Icon": "Buildings/DistrictManagement/DistrictCrossing/DistrictCrossingIcon"
   },
-  "WorkshopAnimationControllerSpec": {},
   "TransformSlotInitializerSpec": {
     "Slots": [
       {
@@ -325,113 +284,137 @@
         "RecipeId": "CaravanPlankGears",
         "LossChance": 0.15,
         "ScienceReward": 0,
-        "GoodRewards": [],
+        "GoodRewards": [
+          {
+            "Id": "Gear",
+            "Amount": 20
+          }
+        ],
         "AwayHours": 12.0
       },
       {
         "RecipeId": "CaravanGearMetal",
         "LossChance": 0.2,
         "ScienceReward": 0,
-        "GoodRewards": [],
+        "GoodRewards": [
+          {
+            "Id": "MetalBlock",
+            "Amount": 8
+          }
+        ],
         "AwayHours": 24.0
       }
     ],
     "WalkingTilesPerHour": 6.0,
     "MinTravelHours": 8.0,
-    "MaxTravelHours": 72.0
+    "MaxTravelHours": 72.0,
+    "CaravanModel": "Caravans/Caravan.IronTeeth.Model"
   },
   "Children": {
     "#Finished": {
       "TimbermeshSpec": {
-        "Model": "Buildings/Metal/Smelter/Smelter.IronTeeth.Model"
+        "Model": "Buildings/Storage/CaravanPost/CaravanPost.IronTeeth.Model"
       },
       "CollidersSpec": {
         "BoxColliders": [
           {
             "Center": {
-              "X": 1.0,
-              "Y": 0.5,
-              "Z": 2.0
+              "X": 1.50582361,
+              "Y": 0.496590853,
+              "Z": 1.0
             },
             "Size": {
-              "X": 2.0,
-              "Y": 1.0,
-              "Z": 4.0
+              "X": 2.76765823,
+              "Y": 1.00564241,
+              "Z": 1.586962
             }
           },
           {
             "Center": {
-              "X": 1.0,
-              "Y": 1.43,
-              "Z": 2.0
+              "X": 1.49376357,
+              "Y": 0.6928351,
+              "Z": 1.0
             },
             "Size": {
-              "X": 1.2,
-              "Y": 0.8,
-              "Z": 3.8
+              "X": 1.72682786,
+              "Y": 1.39813089,
+              "Z": 1.58848
+            }
+          },
+          {
+            "Center": {
+              "X": 1.49376345,
+              "Y": 0.02666691,
+              "Z": 1.5
+            },
+            "Size": {
+              "X": 3.00085449,
+              "Y": 0.06579453,
+              "Z": 2.974409
+            }
+          },
+          {
+            "Center": {
+              "X": 1.5,
+              "Y": 0.62,
+              "Z": 2.5
+            },
+            "Size": {
+              "X": 2.8,
+              "Y": 1.25,
+              "Z": 0.9
             }
           }
         ],
         "SphereColliders": [],
-        "CapsuleColliders": [
-          {
-            "Center": {
-              "X": 1.0,
-              "Y": 2.17,
-              "Z": 3.46
-            },
-            "Radius": 0.299999952,
-            "Height": 1.22929084,
-            "Axis": "Y"
-          }
-        ]
+        "CapsuleColliders": []
       }
     },
     "#Unfinished": {
       "Children": {
-        "ConstructionBase2x4#nested": {
-          "BlueprintPath": "ConstructionBases/ConstructionBase2x4/ConstructionBase2x4.blueprint"
+        "ConstructionBase3x3#nested": {
+          "BlueprintPath": "ConstructionBases/ConstructionBase3x3/ConstructionBase3x3.blueprint"
         },
         "ConstructionStage0": {
           "TimbermeshSpec": {
-            "Model": "Buildings/Metal/Smelter/Smelter.IronTeeth.ConstructionStage0.Model"
+            "Model": "Buildings/Storage/CaravanPost/CaravanPost.IronTeeth.ConstructionStage0.Model"
           },
           "CollidersSpec": {
             "BoxColliders": [
               {
                 "Center": {
-                  "X": 1.0,
-                  "Y": 0.5,
-                  "Z": 2.0
+                  "X": 1.5,
+                  "Y": 0.4955544,
+                  "Z": 1.0
                 },
                 "Size": {
-                  "X": 2.0,
-                  "Y": 1.0,
-                  "Z": 4.0
+                  "X": 2.7535162,
+                  "Y": 0.9911088,
+                  "Z": 1.540376
                 }
               },
               {
                 "Center": {
-                  "X": 1.0,
-                  "Y": 1.2380892,
-                  "Z": 2.0
+                  "X": 1.5,
+                  "Y": 1.31363821,
+                  "Z": 1.0
                 },
                 "Size": {
-                  "X": 0.631913662,
-                  "Y": 0.47758913,
-                  "Z": 3.80000019
+                  "X": 1.75455,
+                  "Y": 0.644045353,
+                  "Z": 0.480425
                 }
               },
               {
                 "Center": {
-                  "X": 0.9969897,
-                  "Y": 1.69178247,
-                  "Z": 3.453835
+                  "X": 1.5,
+                  "Y": 0.03,
+                  "Z": 2.5
                 },
                 "Size": {
-                  "X": 0.4184854,
-                  "Y": 0.426012039,
-                  "Z": 0.41267848
+                  "X": 3.0,
+                  "Y": 0.06,
+                  "Z": 1.0
                 }
               }
             ],

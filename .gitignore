@@ -2,6 +2,7 @@
 *.pyc
 *.pyo
 __pycache__/
+Art/vanilla/
 
 # Build output
 bin/

@@ -77,10 +77,10 @@ namespace Mods.Caravans.Scripts {
       _text.AppendLine(_loc.T("Caravans.Panel.Loading", recipe.CycleDurationInHours));
       _text.AppendLine(_loc.T("Caravans.Panel.Trip", _caravanPost.TripHours(trade), trade.LossChance * 100f));
       _text.AppendLine(_loc.T("Caravans.Panel.Route", _caravanPost.RouteLength));
-      _text.AppendLine(_loc.T("Caravans.Panel.Reward", FormatRewards(trade, recipe)));
+      _text.AppendLine(_loc.T("Caravans.Panel.Reward", FormatRewards(trade)));
     }
 
-    private string FormatRewards(CaravanTradeSpec trade, Timberborn.Workshops.RecipeSpec recipe) {
+    private string FormatRewards(CaravanTradeSpec trade) {
       var rewards = new List<string>();
       if (trade.ScienceReward > 0) {
         rewards.Add(_loc.T("Caravans.Panel.ScienceReward", trade.ScienceReward));
