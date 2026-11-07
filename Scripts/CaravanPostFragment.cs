@@ -76,7 +76,6 @@ namespace Mods.Caravans.Scripts {
       }
       _text.AppendLine(_loc.T("Caravans.Panel.Loading", recipe.CycleDurationInHours));
       _text.AppendLine(_loc.T("Caravans.Panel.Trip", _caravanPost.TripHours(trade), trade.LossChance * 100f));
-      _text.AppendLine(_loc.T("Caravans.Panel.Route", _caravanPost.RouteLength));
       _text.AppendLine(_loc.T("Caravans.Panel.Reward", FormatRewards(trade)));
     }
 
