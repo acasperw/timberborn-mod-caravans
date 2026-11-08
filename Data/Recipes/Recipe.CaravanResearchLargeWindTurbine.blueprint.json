@@ -1,0 +1,19 @@
+{
+  "RecipeSpec": {
+    "Id": "CaravanResearchLargeWindTurbine",
+    "BackwardCompatibleIds": [],
+    "DisplayLocKey": "Recipe.CaravanResearchLargeWindTurbine.DisplayName",
+    "CycleDurationInHours": 12,
+    "Ingredients": [
+      { "Id": "Plank", "Amount": 210 },
+      { "Id": "Gear", "Amount": 60 }
+    ],
+    "Products": [],
+    "ProducedSciencePoints": 0,
+    "Fuel": "",
+    "CyclesFuelLasts": 0,
+    "FuelCapacity": 0,
+    "CyclesCapacity": 2,
+    "Icon": "Sprites/Goods/PlankIcon"
+  }
+}
