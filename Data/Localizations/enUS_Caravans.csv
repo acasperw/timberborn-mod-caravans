@@ -1,6 +1,6 @@
 ID,Text,Comment
 Building.CaravanPost.DisplayName,Caravan Post,
-Building.CaravanPost.Description,"Send goods beyond the map in exchange for science or useful supplies. Choose a trade to prepare a caravan; a worker will load it before it sets off. Trips take time, and some caravans never make it back. Connect the post to the map edge with a road.",
+Building.CaravanPost.Description,"Send a caravan beyond the map to trade goods for science or useful supplies.",
 Building.CaravanPost.FlavorDescription,"""Whatever you can spare, someone beyond the horizon wants.""",
 Caravans.Status.NoRoute,Needs a road to the map edge,
 Caravans.Status.AllOnTheRoad,All caravans are out trading,
