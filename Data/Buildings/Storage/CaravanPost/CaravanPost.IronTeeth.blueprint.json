@@ -12,8 +12,8 @@
         "Amount": 20
       },
       {
-        "Id": "MetalBlock",
-        "Amount": 10
+        "Id": "ScrapMetal",
+        "Amount": 20
       }
     ],
     "ScienceCost": 250,

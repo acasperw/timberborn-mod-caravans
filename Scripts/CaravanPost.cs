@@ -65,7 +65,7 @@ namespace Mods.Caravans.Scripts {
 
     public int MaxCaravans => _spec.MaxConcurrentCaravans;
 
-    public float RouteLength => _route?.Length ?? 0f;
+    public float RouteLength => _route?.TravelLength ?? 0f;
 
     public RecipeSpec CurrentRecipe => _manufactory.HasCurrentRecipe ? _manufactory.CurrentRecipe : null;
 

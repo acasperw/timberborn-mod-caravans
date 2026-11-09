@@ -3,7 +3,7 @@
     "Id": "CaravanGearMetal",
     "BackwardCompatibleIds": [],
     "DisplayLocKey": "Recipe.CaravanGearMetal.DisplayName",
-    "CycleDurationInHours": 12,
+    "CycleDurationInHours": 6,
     "Ingredients": [
       {
         "Id": "Gear",

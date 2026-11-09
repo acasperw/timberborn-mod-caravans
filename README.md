@@ -19,6 +19,12 @@ Built with the [Timberborn modding tools](https://github.com/mechanistry/timberb
 
 ## Changelog
 
+### 0.3.0
+
+- Improved Caravans animation
+- Caravans now use ziplines like beavers + zipline model
+- Balance costs
+
 ### 0.2.0
 
 - Refined player-facing text and removed the route-distance line from the Caravan Post panel.
