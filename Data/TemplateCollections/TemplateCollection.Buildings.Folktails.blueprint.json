@@ -2,7 +2,9 @@
   "TemplateCollectionSpec": {
     "CollectionId": "Buildings.Folktails",
     "Blueprints#append": [
-      "Buildings/Storage/CaravanPost/CaravanPost.Folktails.blueprint"
+      "Buildings/Storage/CaravanPost/CaravanPost.Folktails.blueprint",
+      "Buildings/Power/LargePowerWheel/LargePowerWheel.IronTeeth.blueprint",
+      "Buildings/Storage/LargeIndustrialPile/LargeIndustrialPile.IronTeeth.blueprint"
     ]
   }
 }

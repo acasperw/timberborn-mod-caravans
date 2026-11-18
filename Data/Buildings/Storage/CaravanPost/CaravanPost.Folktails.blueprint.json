@@ -12,7 +12,7 @@
         "Amount": 20
       }
     ],
-    "ScienceCost": 150,
+    "ScienceCost": 250,
     "PlaceFinished": false,
     "FinishableWithBeaversOnSite": false,
     "DrawRangeBoundsOnIt": false
@@ -43,6 +43,8 @@
       "CaravanMetalScience",
       "CaravanPlankGears",
       "CaravanGearMetal",
+      "CaravanResearchLargePowerWheel",
+      "CaravanResearchLargeIndustrialPile",
       "CaravanRewardGear",
       "CaravanRewardMetalBlock"
     ]
@@ -298,6 +300,22 @@
             "Amount": 8
           }
         ],
+        "AwayHours": 24.0
+      },
+      {
+        "RecipeId": "CaravanResearchLargePowerWheel",
+        "BuildingUnlock": "LargePowerWheel.IronTeeth",
+        "LossChance": 0.1,
+        "ScienceReward": 0,
+        "GoodRewards": [],
+        "AwayHours": 24.0
+      },
+      {
+        "RecipeId": "CaravanResearchLargeIndustrialPile",
+        "BuildingUnlock": "LargeIndustrialPile.IronTeeth",
+        "LossChance": 0.1,
+        "ScienceReward": 0,
+        "GoodRewards": [],
         "AwayHours": 24.0
       }
     ],

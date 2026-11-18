@@ -1,6 +1,7 @@
 using Bindito.Core;
 using Timberborn.EntityPanelSystem;
 using Timberborn.TemplateInstantiation;
+using Timberborn.ToolSystem;
 
 namespace Mods.Caravans.Scripts {
   [Context("Game")]
@@ -9,8 +10,12 @@ namespace Mods.Caravans.Scripts {
     protected override void Configure() {
       Bind<MapEdgeRouteFinder>().AsSingleton();
       Bind<CaravanVisualizer>().AsSingleton();
+      Bind<CaravanResearch>().AsSingleton();
+      Bind<CaravanResearchToolUnlocker>().AsSingleton();
       Bind<CaravanPost>().AsTransient();
       Bind<CaravanPostFragment>().AsSingleton();
+      MultiBind<IToolLocker>().To<CaravanResearchLocker>().AsSingleton();
+      MultiBind<IToolDisabler>().To<CaravanResearchToolDisabler>().AsSingleton();
 
       MultiBind<TemplateModule>().ToProvider(ProvideTemplateModule).AsSingleton();
       MultiBind<EntityPanelModule>().ToProvider<EntityPanelModuleProvider>().AsSingleton();

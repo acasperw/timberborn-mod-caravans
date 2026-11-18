@@ -47,6 +47,8 @@
       "CaravanMetalScience",
       "CaravanPlankGears",
       "CaravanGearMetal",
+      "CaravanResearchUndergroundPile",
+      "CaravanResearchLargeWindTurbine",
       "CaravanRewardGear",
       "CaravanRewardMetalBlock"
     ]
@@ -302,6 +304,22 @@
             "Amount": 8
           }
         ],
+        "AwayHours": 24.0
+      },
+      {
+        "RecipeId": "CaravanResearchUndergroundPile",
+        "BuildingUnlock": "UndergroundPile.Folktails",
+        "LossChance": 0.1,
+        "ScienceReward": 0,
+        "GoodRewards": [],
+        "AwayHours": 24.0
+      },
+      {
+        "RecipeId": "CaravanResearchLargeWindTurbine",
+        "BuildingUnlock": "LargeWindTurbine.Folktails",
+        "LossChance": 0.1,
+        "ScienceReward": 0,
+        "GoodRewards": [],
         "AwayHours": 24.0
       }
     ],

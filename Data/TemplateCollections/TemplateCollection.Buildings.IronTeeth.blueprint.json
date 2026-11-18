@@ -2,7 +2,9 @@
   "TemplateCollectionSpec": {
     "CollectionId": "Buildings.IronTeeth",
     "Blueprints#append": [
-      "Buildings/Storage/CaravanPost/CaravanPost.IronTeeth.blueprint"
+      "Buildings/Storage/CaravanPost/CaravanPost.IronTeeth.blueprint",
+      "Buildings/Storage/UndergroundPile/UndergroundPile.Folktails.blueprint",
+      "Buildings/Power/LargeWindTurbine/LargeWindTurbine.Folktails.blueprint"
     ]
   }
 }

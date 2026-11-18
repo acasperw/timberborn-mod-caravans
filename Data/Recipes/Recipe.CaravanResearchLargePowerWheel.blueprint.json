@@ -1,0 +1,18 @@
+{
+  "RecipeSpec": {
+    "Id": "CaravanResearchLargePowerWheel",
+    "BackwardCompatibleIds": [],
+    "DisplayLocKey": "Recipe.CaravanResearchLargePowerWheel.DisplayName",
+    "CycleDurationInHours": 12,
+    "Ingredients": [
+      { "Id": "Log", "Amount": 150 }
+    ],
+    "Products": [],
+    "ProducedSciencePoints": 0,
+    "Fuel": "",
+    "CyclesFuelLasts": 0,
+    "FuelCapacity": 0,
+    "CyclesCapacity": 2,
+    "Icon": "Sprites/Goods/LogIcon"
+  }
+}

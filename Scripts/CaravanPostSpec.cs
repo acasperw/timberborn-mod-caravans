@@ -46,6 +46,9 @@ namespace Mods.Caravans.Scripts {
     public int ScienceReward { get; init; }
 
     [Serialize]
+    public string BuildingUnlock { get; init; }
+
+    [Serialize]
     public ImmutableArray<GoodAmountSpec> GoodRewards { get; init; }
 
   }
