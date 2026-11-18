@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Timberborn.Navigation;
+using Timberborn.ZiplineSystem;
 using UnityEngine;
 
 namespace Mods.Caravans.Scripts {
@@ -11,20 +12,23 @@ namespace Mods.Caravans.Scripts {
     private readonly NodeIdService _nodeIdService;
     private readonly INavMeshSizeProvider _navMeshSizeProvider;
     private readonly PathfindingService _pathfindingService;
+    private readonly ZiplineGroupService _ziplineGroupService;
     private readonly Queue<int> _toVisit = new Queue<int>();
     private readonly HashSet<int> _visited = new HashSet<int>();
     private readonly List<int> _destination = new List<int>(1);
     private readonly List<PathCorner> _corners = new List<PathCorner>();
-    private readonly List<Vector3> _positions = new List<Vector3>();
+    private readonly List<CaravanRoute.Corner> _routeCorners = new List<CaravanRoute.Corner>();
 
     public MapEdgeRouteFinder(RoadNavMeshGraph roadNavMeshGraph,
                               NodeIdService nodeIdService,
                               INavMeshSizeProvider navMeshSizeProvider,
-                              PathfindingService pathfindingService) {
+                              PathfindingService pathfindingService,
+                              ZiplineGroupService ziplineGroupService) {
       _roadNavMeshGraph = roadNavMeshGraph;
       _nodeIdService = nodeIdService;
       _navMeshSizeProvider = navMeshSizeProvider;
       _pathfindingService = pathfindingService;
+      _ziplineGroupService = ziplineGroupService;
     }
 
     public int RoadsVersion { get; private set; }
@@ -35,7 +39,8 @@ namespace Mods.Caravans.Scripts {
       }
     }
 
-    // The game's own road path (weighted like the beavers' routes, with corners placed for stairs), or null.
+    // The game's own road path (weighted like the beavers' routes, with corners placed for stairs and zipline cables),
+    // or null.
     public CaravanRoute FindRoute(Vector3 accessPosition) {
       if (!TryFindMapEdgeNode(accessPosition, out var edgeNodeId)) {
         return null;
@@ -46,11 +51,12 @@ namespace Mods.Caravans.Scripts {
       if (!_pathfindingService.FindRoadPathUncached(accessPosition, _destination, out _, _corners)) {
         return null;
       }
-      _positions.Clear();
+      _routeCorners.Clear();
       foreach (var corner in _corners) {
-        _positions.Add(corner.Position);
+        _routeCorners.Add(new CaravanRoute.Corner(corner.Position, corner.Speed,
+                                                  _ziplineGroupService.IsAnyZiplineGroup(corner.GroupId)));
       }
-      return CaravanRoute.Create(_positions);
+      return CaravanRoute.Create(_routeCorners);
     }
 
     // Breadth-first search over the roads for the closest node on the map border.

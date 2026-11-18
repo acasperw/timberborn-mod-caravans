@@ -3,7 +3,7 @@
     "Id": "CaravanPlankScience",
     "BackwardCompatibleIds": [],
     "DisplayLocKey": "Recipe.CaravanPlankScience.DisplayName",
-    "CycleDurationInHours": 12,
+    "CycleDurationInHours": 6,
     "Ingredients": [
       {
         "Id": "Plank",

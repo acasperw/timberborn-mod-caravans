@@ -466,8 +466,8 @@ def apply_yaw(collection, degrees):
         for obj in collection.objects:
             if obj.type == "MESH":
                 obj.data.transform(rotation)
-            if obj.parent is None:
-                obj.location = rotation @ obj.location
+            # Parents keep their orientation (only mesh data turns), so child nodes turn within their parent's frame too
+            obj.location = rotation @ obj.location
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -502,6 +502,62 @@ def caravan_wheel(collection, faction, name, center, radius, width):
     for obj in parts.build():
         obj.parent = pivot
     return pivot
+
+
+ARM_HINGE = (0.42, 0.33)  # (y, z) of the drawbar's hinge on the front board; the rear arm's is mirrored
+ARM_REACH = (0.36, -0.14)  # the arm's tip relative to its hinge while lowered for the road
+PULLEY_RADIUS = 0.03  # must match CaravanVisualizer.PulleyRadius
+# Nodes that only show while the caravan hangs from a zipline cable (see CaravanVisualizer)
+CABLE_ONLY_NODES = ("#RearArm", "#Pulley")
+
+
+def caravan_arm(collection, faction, name, sign, pulley_name, yoke):
+    """A hinged arm as its own model node, pivoting on its hinge. On the road the front one is the drawbar; on a
+    zipline the game swings both arms straight up so the wagon hangs from the pulleys on their tips like a gondola."""
+    pivot = bpy.data.objects.new(name, None)
+    pivot.location = (0, sign * ARM_HINGE[0], ARM_HINGE[1])
+    collection.objects.link(pivot)
+    reach = Vector((0, sign * ARM_REACH[0], ARM_REACH[1]))
+    direction = reach.normalized()
+    parts = Parts(collection, faction, prefix=name.lstrip("#"))
+    plate = Map("metal_plate", "fit", METAL_DENSITY)
+    beam(parts["light"], -direction * 0.02, reach, 0.04, 0.035, up=(1, 0, 0))
+    cylinder(parts["metal"], (0, 0, 0), 0.022, 0.06, 8, side=plate, cap=plate, axis="x")
+    if yoke:
+        beam(parts["light"], reach - direction * 0.03 + Vector((-0.16, 0, 0)),
+             reach - direction * 0.03 + Vector((0.16, 0, 0)), 0.035)
+    # A fork that holds the pulley's axle
+    pulley_at = reach + direction * (PULLEY_RADIUS + 0.008)
+    for x in (-0.014, 0.014):
+        beam(parts["metal"], reach - direction * 0.03 + Vector((x, 0, 0)), pulley_at + Vector((x, 0, 0)), 0.008, 0.03,
+             maps=plate, up=(1, 0, 0))
+    for part in parts.parts.values():
+        part.ao_z = ARM_HINGE[1]
+    for obj in parts.build():
+        obj.parent = pivot
+
+    pulley = bpy.data.objects.new(pulley_name, None)
+    pulley.location = pulley_at
+    pulley.parent = pivot
+    collection.objects.link(pulley)
+    wheel = Parts(collection, faction, prefix=pulley_name.lstrip("#"))
+    ring(wheel["metal"], (0, 0, 0), PULLEY_RADIUS, PULLEY_RADIUS - 0.009, 0.016, 12,
+         outer=Map("metal_ribs_small", "fit", METAL_DENSITY), axis="x")
+    cylinder(wheel["light"], (0, 0, 0), PULLEY_RADIUS - 0.009, 0.01, 10, cap=Map("log_end_small", "fill"), axis="x")
+    cylinder(wheel["metal"], (0, 0, 0), 0.007, 0.036, 6, side=plate, cap=plate, axis="x")
+    for part in wheel.parts.values():
+        part.ao_z = ARM_HINGE[1] + pulley_at.z
+    for obj in wheel.build():
+        obj.parent = pulley
+    return pivot
+
+
+def _is_cable_only(obj):
+    while obj is not None:
+        if obj.name.startswith(CABLE_ONLY_NODES):
+            return True
+        obj = obj.parent
+    return False
 
 
 def cargo_crate(p, center, size, rot=None, faces=("crate_diagonal", "crate_cross")):
@@ -564,9 +620,11 @@ def build_caravan(faction):
     cargo_crate(p, (-0.095, -0.22, 0.5), 0.13, rot=rot_z(14), faces=("crate_framed", "crate_planks"))
     sack(p, (0.11, -0.13, 0.37), 0.068, 0.19)
     sack(p, (0.105, -0.29, 0.33), 0.06, 0.17, axis="x", rot=rot_z(10))
-    # Drawbar with a yoke, and a trade pennant
-    beam(p["light"], (0, 0.22, 0.2), (0, 0.66, 0.17), 0.04, 0.035)
-    beam(p["light"], (-0.16, 0.64, 0.175), (0.16, 0.64, 0.175), 0.035)
+    # Hinged drawbar with a yoke, a rear arm for ziplines (hinge brackets on the front and tail boards), and a pennant
+    caravan_arm(c, faction, "#Drawbar", 1, "#Pulley0", yoke=True)
+    caravan_arm(c, faction, "#RearArm", -1, "#Pulley1", yoke=False)
+    for sign in (-1, 1):
+        box(p["metal"], (0, sign * 0.4, ARM_HINGE[1]), (0.075, 0.02, 0.05), Map("metal_plate", "fit", METAL_DENSITY))
     cylinder(p["light"], (0.235, 0.375, 0.53), 0.011, 0.36, 6, axis="z", cap=Map("log_end_small", "fill"))
     box(p["details"], (0.235, 0.31, 0.65), (0.006, 0.12, 0.075),
         {"+x": Map(PENNANTS[faction], "fill"), "-x": Map(PENNANTS[faction], "fill"), "all": Map("cloth_plain", "fill")})
@@ -933,7 +991,8 @@ def build_post(faction, vanilla_dir, stage="", wagon=None):
     tris, slots = load_timbermesh(path)
     if wagon:
         bpy.context.view_layer.update()  # the wheels' world matrices come from their parents
-    parked = ([tri for obj in wagon.objects if obj.type == "MESH" for tri in object_tris(obj, POST_WAGON)]
+    parked = ([tri for obj in wagon.objects if obj.type == "MESH" and not _is_cable_only(obj)
+               for tri in object_tris(obj, POST_WAGON)]
               if wagon and not stage else [])
     c = new_collection(f"CaravanPost.{faction}{stage}")
     tris_to_object(c, c.name, extend_post(tris, finished=not stage, wagon=parked))

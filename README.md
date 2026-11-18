@@ -22,10 +22,16 @@ Built with the [Timberborn modding tools](https://github.com/mechanistry/timberb
 ## Changelog
 
 
-### 0.3.0
+### 0.4.0
 
 - Added one-time research caravans that unlock a buildable opposite-faction building for each faction.
 - Reserve science before research trips, hide foreign buildings until unlocked.
+
+### 0.3.0
+
+- Improved Caravans animation
+- Caravans now use ziplines like beavers + zipline model
+- Balance costs
 
 ### 0.2.0
 

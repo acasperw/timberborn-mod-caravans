@@ -3,11 +3,11 @@
     "Id": "CaravanMetalScience",
     "BackwardCompatibleIds": [],
     "DisplayLocKey": "Recipe.CaravanMetalScience.DisplayName",
-    "CycleDurationInHours": 12,
+    "CycleDurationInHours": 6,
     "Ingredients": [
       {
-        "Id": "MetalBlock",
-        "Amount": 10
+        "Id": "ScrapMetal",
+        "Amount": 20
       }
     ],
     "Products": [],
@@ -16,6 +16,6 @@
     "CyclesFuelLasts": 0,
     "FuelCapacity": 0,
     "CyclesCapacity": 2,
-    "Icon": "Sprites/Goods/MetalBlockIcon"
+    "Icon": "Sprites/Goods/ScrapMetalIcon"
   }
 }
