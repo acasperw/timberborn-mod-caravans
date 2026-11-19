@@ -21,11 +21,15 @@ Built with the [Timberborn modding tools](https://github.com/mechanistry/timberb
 
 ## Changelog
 
-
 ### 0.4.0
 
 - Added one-time research caravans that unlock a buildable opposite-faction building for each faction.
 - Reserve science before research trips, hide foreign buildings until unlocked.
+
+### 0.3.5
+
+- Added French, German, Spanish, Polish, Brazilian Portuguese, Russian, Simplified Chinese, Japanese, Korean, Ukrainian, and Turkish translations.
+- Translations were assisted by AI. Suggestions and corrections are welcome on [GitHub](https://github.com/acasperw/timberborn-mod-caravans).
 
 ### 0.3.0
 
