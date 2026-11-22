@@ -75,12 +75,21 @@ namespace Mods.Caravans.Scripts {
         return;
       }
       _text.AppendLine(_loc.T("Caravans.Panel.Loading", recipe.CycleDurationInHours));
+      if (_caravanPost.ScienceNeededToDepart > 0) {
+        _text.AppendLine(_loc.T("Caravans.Panel.NeedsScience", _caravanPost.ScienceNeededToDepart));
+      }
       _text.AppendLine(_loc.T("Caravans.Panel.Trip", _caravanPost.TripHours(trade), trade.LossChance * 100f));
       _text.AppendLine(_loc.T("Caravans.Panel.Reward", FormatRewards(trade)));
     }
 
     private string FormatRewards(CaravanTradeSpec trade) {
       var rewards = new List<string>();
+      if (!string.IsNullOrEmpty(trade.BuildingUnlock)) {
+        var building = _loc.T(_caravanPost.ResearchBuildingNameLocKey(trade));
+        var science = _caravanPost.ResearchScienceCost(trade);
+        rewards.Add(science > 0 ? _loc.T("Caravans.Panel.BuildingUnlock", building, science)
+                                : _loc.T("Caravans.Panel.BuildingUnlockNoScience", building));
+      }
       if (trade.ScienceReward > 0) {
         rewards.Add(_loc.T("Caravans.Panel.ScienceReward", trade.ScienceReward));
       }
@@ -93,7 +102,9 @@ namespace Mods.Caravans.Scripts {
     private void AppendCaravans() {
       _text.AppendLine(_loc.T("Caravans.Panel.Away", _caravanPost.CaravansOnTheRoad, _caravanPost.MaxCaravans));
       for (var i = 0; i < _caravanPost.CaravansOnTheRoad; i++) {
-        _text.AppendLine(_loc.T("Caravans.Panel.Returns", _caravanPost.HoursUntilReturn(i)));
+        var needed = _caravanPost.ScienceNeededOnReturn(i);
+        _text.AppendLine(needed > 0 ? _loc.T("Caravans.Panel.WaitingScience", needed)
+                                    : _loc.T("Caravans.Panel.Returns", _caravanPost.HoursUntilReturn(i)));
       }
     }
 
