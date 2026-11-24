@@ -29,6 +29,7 @@ namespace Mods.Caravans.Scripts {
     private static readonly ListKey<float> ReturnTimesKey = new ListKey<float>("ReturnTimes");
     private static readonly ListKey<float> DepartureTimesKey = new ListKey<float>("DepartureTimes");
     private static readonly ListKey<bool> LostKey = new ListKey<bool>("Lost");
+    private static readonly PropertyKey<bool> NotificationsEnabledKey = new PropertyKey<bool>("NotificationsEnabled");
 
     private readonly IDayNightCycle _dayNightCycle;
     private readonly ILoc _loc;
@@ -64,6 +65,8 @@ namespace Mods.Caravans.Scripts {
     public int CaravansOnTheRoad => _trips.Count;
 
     public int MaxCaravans => _spec.MaxConcurrentCaravans;
+
+    public bool NotificationsEnabled { get; set; }
 
     public float RouteLength => _route?.TravelLength ?? 0f;
 
@@ -142,6 +145,7 @@ namespace Mods.Caravans.Scripts {
       component.Set(ReturnTimesKey, returnTimes);
       component.Set(DepartureTimesKey, departureTimes);
       component.Set(LostKey, lost);
+      component.Set(NotificationsEnabledKey, NotificationsEnabled);
     }
 
     public void Load(IEntityLoader entityLoader) {
@@ -153,6 +157,7 @@ namespace Mods.Caravans.Scripts {
       // Older saves lack departure times and losses.
       var departureTimes = component.Has(DepartureTimesKey) ? component.Get(DepartureTimesKey) : null;
       var lost = component.Has(LostKey) ? component.Get(LostKey) : null;
+      NotificationsEnabled = component.Has(NotificationsEnabledKey) && component.Get(NotificationsEnabledKey);
       for (var i = 0; i < recipeIds.Count; i++) {
         _trips.Add(new Trip(recipeIds[i],
                             departureTimes != null && i < departureTimes.Count
@@ -189,7 +194,9 @@ namespace Mods.Caravans.Scripts {
                           _dayNightCycle.DayNumberHoursFromNow(tripHours), Random.value < trade.LossChance);
       _trips.Add(trip);
       SendVisual(trip);
-      _notificationService.SendNotification(_loc.T("Caravans.Notification.Departed", tripHours));
+      if (NotificationsEnabled) {
+        _notificationService.SendNotification(_loc.T("Caravans.Notification.Departed", tripHours));
+      }
       UpdateStatuses();
     }
 
@@ -216,10 +223,14 @@ namespace Mods.Caravans.Scripts {
         }
         var trade = FindTrade(trip.RecipeId);
         if (trade != null && trip.Lost) {
-          _notificationService.SendWarningNotification(_loc.T("Caravans.Notification.Lost"));
+          if (NotificationsEnabled) {
+            _notificationService.SendWarningNotification(_loc.T("Caravans.Notification.Lost"));
+          }
         } else if (trade != null) {
           Deliver(trade);
-          _notificationService.SendNotification(_loc.T("Caravans.Notification.Returned"));
+          if (NotificationsEnabled) {
+            _notificationService.SendNotification(_loc.T("Caravans.Notification.Returned"));
+          }
         }
         _trips.RemoveAt(i);
         UpdateStatuses();

@@ -18,6 +18,7 @@ namespace Mods.Caravans.Scripts {
     private readonly StringBuilder _text = new StringBuilder();
     private VisualElement _root;
     private Label _label;
+    private Toggle _notificationsToggle;
     private CaravanPost _caravanPost;
     private float _nextRefresh;
 
@@ -36,12 +37,35 @@ namespace Mods.Caravans.Scripts {
       _label.style.color = UnityEngine.Color.white;
       _label.style.whiteSpace = WhiteSpace.Normal;
       _root.Add(_label);
+
+      _notificationsToggle = new Toggle {
+        name = "CaravanNotificationsToggle",
+        text = _loc.T("Caravans.Panel.ShowNotifications"),
+        focusable = true,
+        tabIndex = 0
+      };
+      _notificationsToggle.AddToClassList("game-toggle");
+      _notificationsToggle.AddToClassList(TextClass);
+      _notificationsToggle.style.alignSelf = Align.FlexStart;
+      _notificationsToggle.style.marginTop = 4;
+      _notificationsToggle.style.borderTopWidth = _notificationsToggle.style.borderBottomWidth = 1;
+      _notificationsToggle.style.borderLeftWidth = _notificationsToggle.style.borderRightWidth = 1;
+      SetNotificationsFocus(false);
+      _notificationsToggle.RegisterCallback<FocusInEvent>(evt => SetNotificationsFocus(true));
+      _notificationsToggle.RegisterCallback<FocusOutEvent>(evt => SetNotificationsFocus(false));
+      _notificationsToggle.RegisterValueChangedCallback(evt => {
+        if (_caravanPost is not null) {
+          _caravanPost.NotificationsEnabled = evt.newValue;
+        }
+      });
+      _root.Add(_notificationsToggle);
       return _root;
     }
 
     public void ShowFragment(BaseComponent entity) {
       _caravanPost = entity.GetComponent<CaravanPost>();
       if (_caravanPost is not null) {
+        _notificationsToggle.SetValueWithoutNotify(_caravanPost.NotificationsEnabled);
         _root.ToggleDisplayStyle(true);
         _nextRefresh = 0f;
         UpdateFragment();
@@ -51,6 +75,12 @@ namespace Mods.Caravans.Scripts {
     public void ClearFragment() {
       _caravanPost = null;
       _root.ToggleDisplayStyle(false);
+    }
+
+    private void SetNotificationsFocus(bool focused) {
+      var color = focused ? UnityEngine.Color.white : UnityEngine.Color.clear;
+      _notificationsToggle.style.borderTopColor = _notificationsToggle.style.borderBottomColor = color;
+      _notificationsToggle.style.borderLeftColor = _notificationsToggle.style.borderRightColor = color;
     }
 
     public void UpdateFragment() {

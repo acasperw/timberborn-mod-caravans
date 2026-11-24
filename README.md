@@ -19,6 +19,10 @@ Built with the [Timberborn modding tools](https://github.com/mechanistry/timberb
 
 ## Changelog
 
+### 0.4.0
+
+- Caravan notifications now default to off. Enable them per post in its panel.
+
 ### 0.3.5
 
 - Added French, German, Spanish, Polish, Brazilian Portuguese, Russian, Simplified Chinese, Japanese, Korean, Ukrainian, and Turkish translations.
